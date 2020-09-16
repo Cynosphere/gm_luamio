@@ -13,12 +13,19 @@
 #define liolib_c
 #define LUA_LIB
 
-#include "luastuffs/lua.h"
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+#include <luaconf.h>
 
-#include "luastuffs/lauxlib.h"
-#include "luastuffs/lualib.h"
 
-
+#ifdef _WIN32
+#define lua_popen(L,c,m)        ((void)L, _popen(c,m))
+#define lua_pclose(L,file)      ((void)L, (_pclose(file) != -1))
+#else // posix stuff, by process of elimination
+#define lua_popen(L,c,m)        ((void)L, fflush(NULL), popen(c,m))
+#define lua_pclose(L,file)      ((void)L, (pclose(file) != -1))
+#endif
 
 #define IO_INPUT	1
 #define IO_OUTPUT	2
@@ -489,7 +496,9 @@ static const luaL_Reg flib[] = {
 
 
 static void createmeta (lua_State *L) {
+  printf("newmetatable\n");
   luaL_newmetatable(L, LUA_FILEHANDLE);  /* create metatable for file handles */
+  printf("ok\n");
   lua_pushvalue(L, -1);  /* push metatable */
   lua_setfield(L, -2, "__index");  /* metatable.__index = metatable */
   luaL_register(L, NULL, flib);  /* file methods */
@@ -507,7 +516,9 @@ static void createstdfile (lua_State *L, FILE *f, int k, const char *fname) {
 
 
 LUALIB_API int luaopen_io (lua_State *L) {
+  printf("createmeta\n");
   createmeta(L);
+  printf("done\n");
   /* create (private) environment (with fields IO_INPUT, IO_OUTPUT, __close) */
   lua_createtable(L, 2, 1);
   lua_replace(L, LUA_ENVIRONINDEX);
