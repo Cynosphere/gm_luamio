@@ -20,3 +20,19 @@ CreateWorkspace({name = "luamio"})
 		IncludeScanning()
 		IncludeDetouring()
 		files({"source/*.cpp", "source/luastuffs/*.c", "source/luastuffs/*.h"})
+
+		filter {"system:windows", "action:gmake"}
+			buildoptions {
+				"-w", "-fpermissive",
+
+				"-Wl,-static",
+				"-static-libgcc",
+				"-static-libstdc++",
+				"-Wl,-Bstatic,--whole-archive", "-lmcfgthread", "-Wl,-Bdynamic,--no-whole-archive"
+			}
+			linkoptions {
+				"-Wl,-static",
+				"-static-libgcc",
+				"-static-libstdc++",
+				"-Wl,-Bstatic,--whole-archive", "-lmcfgthread", "-Wl,-Bdynamic,--no-whole-archive"
+			}
