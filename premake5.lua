@@ -31,6 +31,9 @@ CreateWorkspace({name = "luamio"})
 				"-Wl,-Bstatic,--whole-archive", "-lmcfgthread", "-Wl,-Bdynamic,--no-whole-archive"
 			}
 			linkoptions {
+				-- FIXME: -L path doesnt work, manually fixed it with LDFLAGS
+				"-L./lib/win64 -llua_shared",
+
 				"-Wl,-static",
 				"-static-libgcc",
 				"-static-libstdc++",

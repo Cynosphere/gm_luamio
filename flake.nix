@@ -17,6 +17,7 @@
           binutils
           premake5
           gnumake
+          gendef
         ];
 
         buildInputs = with crossPkgs; [
